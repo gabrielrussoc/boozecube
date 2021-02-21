@@ -2,3 +2,5 @@ pytesseract==0.3.7
 Pillow==8.1.0
 beautifulsoup4==4.9.3
 progressbar==2.5
+opencv-python==4.5.1.48
+numpy==1.19.5

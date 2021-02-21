@@ -1,12 +1,13 @@
+import shutil
+
 from PIL import Image
 import pytesseract
 
 CUBE_URL = "https://github.com/gabrielrussoc/boozecube/releases/download/0.0.0/cube.tar.gz"
 
-pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = shutil.which("tesseract")
 
-# card_img = Image.open('C:/Users/gabrielrc/Documents/boozecube/Archon of Light Beer.jpg')
-card_img = Image.open('C:/Users/gabrielrc/Documents/boozecube/Alkie Griffin.jpg')
+card_img = Image.open('./ArgothianSororityGirl.jpg')
 
 NAME_BOX = (30, 30, 300, 52)
 MANA_BOX = (250, 30, 345, 52)
@@ -45,3 +46,22 @@ print(pytesseract.image_to_string(power_img, config="--psm 7").strip())
 #  11    Sparse text. Find as much text as possible in no particular order.
 #  12    Sparse text with OSD.
 #  13    Raw line. Treat the image as a single text line,
+
+
+# Playing around with mana
+import cv2
+import numpy
+from sprites import ZERO, ONE, TWO, WHITE
+from util import pilToCv
+
+mana_img_opencv = pilToCv(card_img)
+
+results = cv2.matchTemplate(mana_img_opencv, WHITE, cv2.TM_CCOEFF_NORMED)
+locations = numpy.where( results >= 0.6)
+print(locations)
+for pt in zip(*locations[::-1]):
+    cv2.rectangle(mana_img_opencv, pt, (pt[0] + 20, pt[1] + 20), (0, 0, 0), 2)
+
+cv2.imwrite("a.png", mana_img_opencv)
+# mana_img.show()
+
