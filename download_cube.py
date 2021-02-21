@@ -7,6 +7,7 @@ from contextlib import closing
 from io import BytesIO
 import tarfile
 import progressbar
+import json
 
 # Downloads all the card images from http://theboozecube.blogspot.com and puts it into an archive (.tar.gz)
 
@@ -48,6 +49,8 @@ bar.start()
 
 print("Downloading cube to " + output_filename)
 
+
+img_to_url = {}
 with tarfile.open(output_filename, "w:gz") as tar:
     for idx, url in enumerate(cards_urls):
         bar.update(idx + 1)
@@ -57,6 +60,11 @@ with tarfile.open(output_filename, "w:gz") as tar:
             tarinfo = tarfile.TarInfo(filename)
             tarinfo.size = len(file_obj.getvalue())
             tar.addfile(tarinfo, fileobj=file_obj)
+            img_to_url[filename] = url
+    with closing(BytesIO(json.dumps(img_to_url).encode())) as file_obj:
+        tarinfo = tarfile.TarInfo("urls.json")
+        tarinfo.size = len(file_obj.getvalue())
+        tar.addfile(tarinfo, fileobj=file_obj)
 
 print("Finished downloading cube")
 

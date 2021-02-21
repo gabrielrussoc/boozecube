@@ -1,3 +1,8 @@
+# Cube
+cube/
+cube.tar.gz
+database.xml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
