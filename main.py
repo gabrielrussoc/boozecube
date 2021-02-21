@@ -1,6 +1,8 @@
 from PIL import Image
 import pytesseract
 
+CUBE_URL = "https://github.com/gabrielrussoc/boozecube/releases/download/0.0.0/cube.tar.gz"
+
 pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
 # card_img = Image.open('C:/Users/gabrielrc/Documents/boozecube/Archon of Light Beer.jpg')
