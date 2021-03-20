@@ -4,7 +4,7 @@ import glob
 from PIL import Image
 import pytesseract
 
-from card import Card
+from card import Card, CardType
 import progressbar
 import json
 
@@ -61,7 +61,7 @@ for i, f in enumerate(all_cards):
     power = pytesseract.image_to_string(power_img, config="--psm 7").strip()
 
     # HACK: URL is file name
-    cards.append(Card(name=name, description=description, picurl=image_urls[f.strip("cube/")]))
+    cards.append(Card(name=name, description=description, picurl=image_urls[f.strip("cube/")], type=CardType.from_text(type)))
 
 bar.finish()
 

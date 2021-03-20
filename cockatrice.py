@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
+from card import CardType
 
 # Returns a string with the cockatrice database XML
 # https://github.com/Cockatrice/Cockatrice/wiki/Custom-Cards-&-Sets
@@ -29,7 +30,7 @@ def create_database(all_cards):
         if c.enters_tapped:
             ET.SubElement(card, "cipt").text = "1"
 
-        ET.SubElement(card, "tablerow").text = tablerow(c.type)
+        ET.SubElement(card, "tablerow").text = str(tablerow(c.type))
 
         ET.SubElement(card, "set", {"rarity": rarity(c.rarity), "picurl": c.picurl}).text = set_name
 
@@ -49,9 +50,14 @@ def indent(xml_str):
     return minidom.parseString(xml_str).toprettyxml(indent="   ")
 
 
-# TODO: add card type conversion
-def tablerow(t):
-    return "0"
+def tablerow(t: CardType) -> int:
+    if t in (CardType.LAND,):
+        return 0
+    if t in (CardType.SORCERY, CardType.INSTANT):
+        return 3
+    if t in (CardType.CREATURE,):
+        return 2
+    return 1
 
 # TODO: add manacost
 def manacost(_):
