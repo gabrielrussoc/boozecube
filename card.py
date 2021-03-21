@@ -1,14 +1,23 @@
 from dataclasses import dataclass
 from enum import Enum
-from fuzzysearch import find_near_matches
+from fuzzywuzzy import fuzz
 
 
 def _best_match(pat: str, text: str) -> int:
-    return min([match.dist for match in find_near_matches(pat.lower(), text.lower(), max_l_dist=4)] + [100])
+    ratio = fuzz.partial_ratio(pat.lower(), text.lower())
+    if ratio > 90:
+        return 100
+    elif ratio < 50:
+        return 0
+    else:
+        return ratio
 
 
 # TODO: What if a card has two types? e.g. Artifact creature
 class CardType(Enum):
+    # Token cards don't have the card type on the same location, so we will process some trash text and default to
+    # token because it has priority.
+    TOKEN = "Token"
     LAND = "Land"
     # Creature must be before Artifact or Enchantment because it has priority
     CREATURE = "Creature"
@@ -23,8 +32,7 @@ class CardType(Enum):
         types_with_matches = [
             (tp, _best_match(tp.value, text)) for tp in all_types
         ]
-        return min(types_with_matches, key=lambda v: v[1])[0]
-
+        return max(types_with_matches, key=lambda v: v[1])[0]
 
 
 class CardRarity(Enum):
@@ -45,7 +53,6 @@ class Card:
     description: str
     picurl: str
     type: CardType
-    token: bool = False
     enters_tapped = False
     rarity: CardRarity = CardRarity.COMMON
     layout: CardLayout = CardLayout.NORMAL

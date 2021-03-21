@@ -1,10 +1,12 @@
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
-from card import CardType
+from card import CardType, Card
+from typing import Iterable
+
 
 # Returns a string with the cockatrice database XML
 # https://github.com/Cockatrice/Cockatrice/wiki/Custom-Cards-&-Sets
-def create_database(all_cards):
+def create_database(all_cards: Iterable[Card]) -> str:
     database = ET.Element("cockatrice_carddatabase", {
         "version": "4"
     })
@@ -24,7 +26,7 @@ def create_database(all_cards):
         ET.SubElement(card, "name").text = c.name
         ET.SubElement(card, "text").text = c.description
 
-        if c.token:
+        if c.type == CardType.TOKEN:
             ET.SubElement(card, "token").text = "1"
 
         if c.enters_tapped:
@@ -42,7 +44,6 @@ def create_database(all_cards):
 
         # TODO: add converted mana cost, colors, power/toughness
 
-
     return indent(ET.tostring(database))
 
 
@@ -55,17 +56,20 @@ def tablerow(t: CardType) -> int:
         return 0
     if t in (CardType.SORCERY, CardType.INSTANT):
         return 3
-    if t in (CardType.CREATURE,):
+    if t in (CardType.CREATURE, CardType.TOKEN):
         return 2
     return 1
+
 
 # TODO: add manacost
 def manacost(_):
     return "1W"
 
+
 # TODO: handle layouts
 def layout(l):
     return "normal"
+
 
 # TODO: handle rarity
 def rarity(r):
@@ -74,6 +78,7 @@ def rarity(r):
 
 if __name__ == "__main__":
     from card import Card
+
     print(create_database([
         Card(
             name="aa",
@@ -81,4 +86,3 @@ if __name__ == "__main__":
             picurl="http://1.bp.blogspot.com/-9_Tv3yunbwU/VnhZYP7Dr4I/AAAAAAAAGDI/4TMvviamoQQ/s1600/Mother%2BBeaver.jpg"
         )
     ]))
-
