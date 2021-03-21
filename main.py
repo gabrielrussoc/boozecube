@@ -19,11 +19,16 @@ def setup_tesseract() -> None:
 
 
 @click.command()
-@click.argument("dir_name", type=click.Path(exists=True), default="cube")
+@click.argument("files", type=click.Path(exists=True), default="cube")
 @click.option("--urls-file", type=click.Path(exists=True, dir_okay=False), default="cube/urls.json")
-def main(dir_name: str, urls_file: str) -> None:
+def main(files: str, urls_file: str) -> None:
     setup_tesseract()
-    all_cards = list(Path(dir_name).glob("*.jpg"))
+
+    files = Path(files)
+    if files.is_dir():
+        all_cards = list(files.glob("*.jpg"))
+    else:
+        all_cards = [files]
 
     with click.progressbar(length=len(all_cards), label="OCRing all cards...") as bar:
 
@@ -70,6 +75,7 @@ def main(dir_name: str, urls_file: str) -> None:
             # HACK: URL is file name
             cards.append(Card(name=name, description=description, picurl=image_urls[str(f.name)],
                               type=CardType.from_text(type_str)))
+    print("Finished OCRing cards, creating database.")
 
     from cockatrice import create_database
     with open("database.xml", "w") as f:
