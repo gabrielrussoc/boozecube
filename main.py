@@ -74,7 +74,7 @@ def main(files: str, urls_file: str) -> None:
 
             # HACK: URL is file name
             cards.append(Card(name=name, description=description, picurl=image_urls[str(f.name)],
-                              type=CardType.from_text(type_str)))
+                              type=CardType.from_text(type_str), full_type=type_str))
     click.echo("Finished OCRing cards, creating database.")
 
     from cockatrice import create_database

@@ -6,3 +6,4 @@ numpy==1.19.5
 fuzzysearch==0.7.3
 click==7.1.2
 fuzzywuzzy==0.18.0
+python-Levenshtein==0.12.2

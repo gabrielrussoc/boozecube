@@ -33,6 +33,8 @@ def create_database(all_cards: Iterable[Card]) -> str:
             ET.SubElement(card, "cipt").text = "1"
 
         ET.SubElement(card, "tablerow").text = str(tablerow(c.type))
+        ET.SubElement(card, "type").text = c.full_type
+        ET.SubElement(card, "maintype").text = c.type.value
 
         ET.SubElement(card, "set", {"rarity": rarity(c.rarity), "picurl": c.picurl}).text = set_name
 

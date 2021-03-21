@@ -53,7 +53,12 @@ class Card:
     description: str
     picurl: str
     type: CardType
+    full_type: str
     enters_tapped = False
     rarity: CardRarity = CardRarity.COMMON
     layout: CardLayout = CardLayout.NORMAL
     mana = None  # TODO
+
+    def __post_init__(self) -> None:
+        if self.type == CardType.TOKEN:
+            self.full_type = "Token"
