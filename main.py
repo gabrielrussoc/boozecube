@@ -1,5 +1,5 @@
 import shutil
-import glob
+from pathlib import Path
 
 from PIL import Image
 import pytesseract
@@ -12,7 +12,7 @@ CUBE_URL = "https://github.com/gabrielrussoc/boozecube/releases/download/0.0.0/c
 
 pytesseract.pytesseract.tesseract_cmd = shutil.which("tesseract")
 
-all_cards = glob.glob("cube/*.jpg")
+all_cards = list(Path("cube").glob("*.jpg"))
 
 bar = progressbar.ProgressBar(maxval=len(all_cards), \
                               widgets=[progressbar.SimpleProgress()])
@@ -20,7 +20,7 @@ bar.start()
 
 print("OCRing all cards...")
 
-with open("cube/urls.json") as f:
+with open(Path("cube", "urls.json")) as f:
     image_urls = json.loads(f.read())
 
 cards = []
@@ -61,7 +61,7 @@ for i, f in enumerate(all_cards):
     power = pytesseract.image_to_string(power_img, config="--psm 7").strip()
 
     # HACK: URL is file name
-    cards.append(Card(name=name, description=description, picurl=image_urls[f.strip("cube/")], type=CardType.from_text(type)))
+    cards.append(Card(name=name, description=description, picurl=image_urls[str(Path(f).name)], type=CardType.from_text(type)))
 
 bar.finish()
 
