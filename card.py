@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
 from fuzzywuzzy import fuzz
+from typing import Optional
+import re
 
 
 def _best_match(pat: str, text: str) -> int:
@@ -54,6 +56,7 @@ class Card:
     picurl: str
     type: CardType
     full_type: str
+    power_toughness: Optional[str] = None
     enters_tapped = False
     rarity: CardRarity = CardRarity.COMMON
     layout: CardLayout = CardLayout.NORMAL
@@ -62,3 +65,6 @@ class Card:
     def __post_init__(self) -> None:
         if self.type == CardType.TOKEN:
             self.full_type = "Token"
+
+        if self.power_toughness is not None and not re.search("[0-9*]+/[0-9*]+", self.power_toughness):
+            self.power_toughness = None
